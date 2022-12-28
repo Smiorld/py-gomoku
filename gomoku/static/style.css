@@ -1,0 +1,614 @@
+html * {
+    font-family: 'Roboto';
+    margin: 0;
+    padding: 0;
+    font-size: large;
+}
+ pre {
+    overflow-x: auto;
+    white-space: pre-wrap;
+    white-space: -moz-pre-wrap;
+    white-space: -pre-wrap;
+    white-space: -o-pre-wrap;
+    word-wrap: break-word;
+ }
+:root {
+	--gap: 24px;
+    --content-gap: 100px;
+	--primary: #196CFF;
+	--secondary: #1456CC;
+    --bg-primary: #fcfcfc;
+	--tertiary: rgb(214, 214, 214);
+	--content: rgb(31, 31, 31);
+}
+
+body {
+    background-color: var(--bg-primary);
+}
+
+input {
+    accent-color: var(--primary);
+}
+
+.content_container {
+    max-width: 70%;
+    margin: auto;
+}
+.title {
+    margin-top: 20px;
+}
+h1 {
+    text-align: center;
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 700;
+    font-size: 2em;
+}
+
+.subtitle {
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 1em;
+}
+
+.text_center {
+    text-align: center;
+}
+.back-box {
+    background: var(--tertiary);
+    border-radius: 5px;
+    padding: 0 20px 20px 20px;
+    margin-top: 30px;
+}
+.question_options {
+    padding-top: var(--gap);
+    margin-bottom: var(--gap);
+    display: flex;
+    justify-content: space-around;
+}
+
+.button {
+    background-color: var(--primary);
+    border: none;
+    color: var(--tertiary);
+    padding: var(--gap);
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    transition: 0.5s;
+}
+
+.button:hover {
+    background-color: var(--secondary);
+}
+  
+.next_button {
+    border-radius: 5px;
+    padding: var(--gap) calc(2*var(--gap));
+    margin-top: var(--gap);
+    color: white;
+    font-size: large;
+    font-weight: 700;
+}
+
+.align_right {
+    margin: 0 5px;
+    float: right;
+}
+
+.align_left {
+    margin: 0 5px;
+    float: left;
+}
+
+.option {
+    transition: 0.2s;
+    border-radius: 20px;
+    margin-right: 30px;
+}
+
+.checkbox-round {
+    accent-color: var(--primary);
+    height: 1.3em;
+    margin: auto;
+    margin-right: 1em;
+    border-radius: 50%;
+} 
+
+.filterbox {
+    margin-left: 2.5em;
+    margin-top: 2.8em;
+    position: absolute;
+    flex: 0 0 100%;
+}
+
+.select{
+    outline: solid 5px;
+	color: var(--primary);
+	transform: scale(0.95);
+}
+
+.option:hover {
+    transform: scale(0.95); /* (150% zoom - Note: if the zoom is too large, it will go outside of the viewport) */
+}
+
+/* NAVBAR */
+
+
+nav {
+    background-color: var(--primary);
+    overflow: hidden;
+    box-shadow: 0 0 2px 0 --tertiary;
+}
+
+nav ul {
+    font-size: 0;
+}
+.topnav {
+   max-height: 60px;
+}
+
+nav li {
+    display: inline-flex;
+    padding: 0;
+    margin: 0;
+}
+
+nav li a {
+    padding: 20px 25px;
+    text-align: center;
+    font-size: 17px;
+    color:white;
+    text-decoration: none;
+}
+
+nav {
+    display: flex;
+    align-items:end;
+    background-color: var(--primary);
+    color:white;
+}
+
+.active {
+    color:var(--tertiary)!important;
+}
+
+nav li a:hover {
+    background-color:rgb(255, 255, 255);
+    display: block;
+    color:var(--secondary) !important;
+    transition: 0.5s;
+}
+
+#pers_greet {
+    padding: 0 0 0 20px;
+    color: var(--tertiary);
+}
+
+/* forms */
+.form-container {
+    margin: auto;
+    margin-top: var(--content-gap);
+    background-color: var(--tertiary);
+    padding: 5vh 3vw;
+    border-radius: 10px;
+    max-width: 400px;
+}
+.wide-form {
+    max-width: unset;
+}
+
+.margin-auto {
+    margin-top: auto;
+    margin-bottom: auto;
+}
+
+.input {
+    width: 100%;
+    padding: 10px 10px;
+    margin: 12px 0;
+    accent-color: var(--primary);
+    background-color: white;
+    display: inline-block;
+    border: 1px solid darkslategrey;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+input[type=submit] {
+    width: 100%;
+    background-color: var(--secondary);
+    color: white;
+    padding: 14px 20px;
+    margin: 8px 0;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+input[type=submit]:hover {
+    color: whitesmoke;
+    transition: 0.5s;
+    background-color: var(--primary);
+    box-shadow:0 0 10px 0 var(--secondary);
+}
+
+#addTestCase {
+    margin-bottom: 10px;
+    transition:0.2s
+}
+
+
+#addTestCase:hover {
+    background: #4CAF50;
+    transition:0.2s
+}
+#deleteTestCase {
+    background: red !important;
+    margin-bottom: 10px;
+    transition:0.2s;
+    color:white;
+}
+#deleteTestCase:hover {
+    background: crimson;
+    transition:0.2s
+}
+
+
+.tt-hov {
+    z-index: -10;
+    height: 50px;
+    width: 800px;
+    position: absolute;
+}
+
+.ptop {
+    padding-top:0px !important;
+}
+.abs {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+.divider {
+    padding:10px;
+    margin: 0 0 10px 0;
+    color: black;
+}
+div .tt:hover:before {
+    text-align: right;
+   content:attr(data-tooltip);
+   position:absolute;
+   margin: -30px 0px;
+   right: 30%;
+   transform: translateX(50%);
+   padding:5px 10px;
+   background:orange;
+   color:white;
+   border-radius:3px;
+}
+
+input[type="text"] .tt {
+   width:125px;
+   -webkit-box-sizing:border-box;
+   -moz-box-sizing:border-box;
+   box-sizing:border-box;
+}
+.end_input {
+    margin-bottom: unset;
+}
+/* Coding */
+
+.question, .code_area {
+  padding: 25px;
+  display: table-cell;
+  width: 50%;
+}
+.question {
+  text-align: left;
+  position: absolute;
+}
+/*.code_area {
+  border-left: 5px solid var(--primary);
+} */
+
+.container {
+  display: table;
+  height: 95vh;
+  width: 95vw;
+}
+
+.input, #results {
+  height: 60%;
+}
+.code_input {
+  border: 5px solid var(--tertiary);
+  width: 90%;
+  font-family: monospace;
+  font-size: 12pt;
+  padding: 10px;
+}
+.run_tests {
+  border-radius: 5px;
+  width: 150px;
+  height: 50px;
+  cursor: pointer;
+  background-color: var(--primary);
+  color: white;
+  font-weight: bolder;
+  border: unset;
+  display: inline;
+}
+.run_tests:hover {
+    background-color: #ccc !important;
+    color: black;
+    transition: 0.3s;
+}
+.form-label {
+    background: var(--primary);
+    color: white;
+    padding: 10px;
+}
+
+#j-left {
+    float: left;
+    width: 55%;
+    height: 90vh;
+    overflow: scroll;
+}
+#j-right {
+    float: left;
+    width: 45%;
+    height: 90vh;
+    overflow: scroll;
+}
+
+.box {
+    margin: auto;
+    margin-top: var(--gap);
+    background-color: var(--tertiary);
+    padding: 5% 10%;
+    border-radius: 10px;
+    max-width: 70%;
+}
+
+.greyed-text {
+    opacity: 0.5;
+}
+
+span.grippy {
+    content: '....';
+    width: 10px;
+    height: 20px;
+    display: inline-block;
+    overflow: hidden;
+    line-height: 5px;
+    padding: 3px 4px;
+    cursor: move;
+    vertical-align: middle;
+    margin-top: -.7em;
+    margin-right: .3em;
+    font-size: 12px;
+    font-family: sans-serif;
+    letter-spacing: 2px;
+    color: #cccccc;
+    text-shadow: 1px 0 1px black;
+}
+
+span.grippy::after {
+    content: '.. .. .. ..';
+}
+
+.mt-1 {
+    margin-top: var(--gap);
+}
+
+.mr-1 {
+    margin-right: var(--gap);
+}
+
+.ml-1 {
+    margin-left: var(--gap);
+}
+
+.mb-1 {
+    margin-bottom: var(--gap);
+}
+
+.draggable-option {
+    min-width: 90%;
+    max-height: 2em;
+}
+
+
+.material-icons {
+    margin: auto;
+    margin-left: 0.8em;
+    cursor: pointer;
+    font-size: 1.3em;
+    color: var(--primary) 
+}
+
+.options-container {
+    display: flex;
+}
+
+#take_assessment_flex {
+    display: flex;
+    height: 100%;
+    width: 100%;
+    
+}
+.question_container {
+    width: 80%;
+    margin:auto;
+}
+
+.hover-effect:hover {
+  color: whitesmoke;
+  transition: 0.25s;
+  background-color: var(--primary);
+  box-shadow: 0 0 5px 0 var(--secondary);
+}
+.red-hover-effect:hover {
+  color: whitesmoke;
+  transition: 0.25s;
+  background-color: var(--primary);
+  box-shadow: 0 0 5px 0 crimson;
+}
+
+aside {
+    width: 90%;
+    margin-right:5%;
+    float: right;
+  }
+
+.feedback_flex {
+    display: flex;
+    justify-content: space-evenly;
+}
+
+.feedback_container {
+    padding: 1px 5px;
+    margin-left: 16px;
+    width: 60%;
+    border: 1px solid grey     
+}
+.feedback_container:last-child {
+    margin-left: 0px;
+    margin-right: 16px;
+}
+
+.assessment_title {
+    font-size: 1.2em;
+}
+
+.assessment_descript {
+    font-style: italic;
+    font-size: .8em;
+}
+
+.codebox {
+    padding: 0px 10px;
+    margin: 5px 10px;
+    border: 1px dotted var(--secondary)
+}
+
+.assessment_container{
+    position: relative;
+}
+
+.right-button {
+    position: absolute;
+    right: 16px;
+    top: 15%;
+}
+
+.summative-button {
+    position: absolute;
+    right: 16px;
+    top: 25%;
+}
+
+.generate_formative {
+    position: absolute;
+    right: 4%;
+    top: 10px;
+}
+
+.countdown {
+    width: 10%;
+    font-size: 1.5em;
+    text-align: center;
+    margin: 0% 22.5%;
+    position: absolute;
+    border: 1px black solid;
+    user-select: none;
+}
+
+/* question dash */
+#question_header {
+padding:20px;
+}
+
+#question_table {
+  border-collapse: collapse;
+  width: 100%;
+  margin-bottom: 10px;
+  margin-top: 10px;
+}
+
+#question_table td, #question_table th {
+  border: 1px solid #ddd;
+  padding: 8px;
+}
+
+#question_table tr:nth-child(even){background-color: #f2f2f2;}
+
+#question_table tr:hover {background-color: #ddd;}
+
+#question_table th {
+  padding-top: 12px;
+  padding-bottom: 12px;
+  text-align: left;
+  background-color: var(--primary);
+  color: white;
+}
+
+.student_assessment_headings {
+    font-size: 1.3em;
+    font-weight: 600;
+    margin: 15px auto;
+
+}
+.student_assessment_heading_container {
+    width: 75%;
+    border: 1px solid var(--secondary);
+    border-radius: 10px;
+    margin: auto;
+    margin-bottom: 20px;
+    position: relative;
+}
+.student_assessment_container {
+    width: 95%;
+    margin: auto;
+}
+.big-text-area {
+    height: 120px;
+    display:content;
+}
+
+/* this was removed during a commit for some reason, alongside my question dash css??
+ i have put it back in but commented it out, please uncomment if you need to use. */
+
+.input-control.success input, .input-control.success textarea, .input-control.success select {
+    border-color: #09c372;
+}
+
+.input-control.error input, .input-control.error textarea, .input-control.error select {
+    border-color: #ff3860;
+}
+
+.flex {
+    display: flex;
+    justify-content: space-between;
+}
+
+.input-control .input-error {
+    color: #ff3860;
+    margin-bottom: 5px;
+    font-size: 0.9em;
+    /* height: 13px; } */
+}
+.but_cont {
+    display: flex;
+    justify-content: center;
+}
+
+.edit_ques:hover {
+    background-color: #ccc !important;
+    color: black;
+}

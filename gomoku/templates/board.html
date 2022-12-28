@@ -1,0 +1,45 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<script>
+    function drop_a_piece(i,j) {
+        alert("You clicked on a piece "+i+" "+j);
+    }
+</script>
+
+<table style=' border-collapse: collapse;'>
+
+{% for i in range(board_size) %}
+    <tr>
+        {% for j in range(board_size) %}
+            <td onclick=drop_a_piece({{i}},{{j}}) class="cell" id="{{i}}-{{j}}">
+                {% if i > 0 and board_size-1 > i and j > 0 and board_size-1 > j %}
+                    <img  src='/static/img/center.png'>
+                {% elif i==0  %}
+                    {% if j==0  %}
+                        <img  src='/static/img/left_top.png'>
+                    {% elif j==board_size-1 %}
+                        <img  src='/static/img/right_top.png'>
+                    {% else %}
+                        <img  src='/static/img/top.png'>
+                    {% endif %}
+                {% elif i==board_size-1 %}
+                    {% if j==0  %}
+                        <img  src='/static/img/left_bot.png'>
+                    {% elif j==board_size-1 %}
+                        <img  src='/static/img/right_bot.png'>
+                    {% else %}
+                        <img  src='/static/img/bot.png'>
+                    {% endif %}
+                {% elif j==0 %}
+                    <img  src='/static/img/left.png'>
+                {% elif j==board_size-1 %}
+                    <img src='/static/img/right.png'>
+                {% endif %}
+
+            </td>
+        {% endfor %}
+    </tr>
+{% endfor %}
+</table>
+{% endblock content %}
