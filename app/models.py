@@ -1,8 +1,9 @@
+# this file is only for database models. needless to be imported into __init__.py
 from email.policy import default
 import json
 from flask_login import UserMixin
 from sqlalchemy import null
-from gomoku import db, login_manager
+from app import db, login_manager
 from sqlalchemy.orm import backref
 from werkzeug.security import generate_password_hash, check_password_hash
 
