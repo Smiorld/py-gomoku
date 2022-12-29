@@ -26,10 +26,12 @@ def create_app(debug=False) -> Flask:
     basedir = os.path.abspath(os.path.dirname(__file__))
     app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///" + os.path.join(basedir, "data.db")
 
+    from .gomoku import gomoku as gomoku_blueprint
+    app.register_blueprint(gomoku_blueprint)
 
     db.init_app(app)
     socketio.init_app(app)
     login_manager.init_app(app)
     return app
-    
-from . import routes
+
+from . import models
