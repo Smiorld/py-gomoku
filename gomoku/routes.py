@@ -1,4 +1,3 @@
-import requests
 from flask import (
     Flask,
     render_template,
@@ -20,6 +19,3 @@ def room(room_number, player_number):
 def drop_a_piece(room_number, player_number, row, column):
 
     return render_template("board.html", board_size=13, room_number=room_number, player_number=player_number)
-
-player1_set
-player2_set

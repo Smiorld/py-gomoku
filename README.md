@@ -4,7 +4,7 @@
 
 
 # plan
-12.29 计划：把数据库的room表填好。把flask_socketOI和websocket打个样跑起来。如果效率够高，把纯下棋的棋盘socket部分写好。
+12.29 计划：把数据库的room表填好。把flask_socketIO和websocket打个样跑起来。如果效率够高，把纯下棋的棋盘socket部分写好。
 
 1.4 目前起码五子棋的部分能玩能跑
 
