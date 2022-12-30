@@ -91,11 +91,48 @@
     function start_game(){
         if (role=='host' && !room_dict['gaming_status'] && room_dict['guest']!=null){
             let room_id = room_dict['id'];
+            reset_board();
             socket.emit('start game', {'room_id':room_id});
         }
         else{
             alert('You are not the host or the game has already started!');
         }
+    }
+
+    function reset_board(){
+        board=document.getElementById("board");
+        board.innerHTML=`  {% for i in range(board_size) %}
+        <tr>
+            {% for j in range(board_size) %}
+                <td onclick=place_a_piece({{i}},{{j}}) class="cell" id="{{i}}-{{j}}" state=0>
+                    {% if i > 0 and board_size-1 > i and j > 0 and board_size-1 > j %}
+                        <img  src='/static/img/center.png'>
+                    {% elif i==0  %}
+                        {% if j==0  %}
+                            <img  src='/static/img/left_top.png'>
+                        {% elif j==board_size-1 %}
+                            <img  src='/static/img/right_top.png'>
+                        {% else %}
+                            <img  src='/static/img/top.png'>
+                        {% endif %}
+                    {% elif i==board_size-1 %}
+                        {% if j==0  %}
+                            <img  src='/static/img/left_bot.png'>
+                        {% elif j==board_size-1 %}
+                            <img  src='/static/img/right_bot.png'>
+                        {% else %}
+                            <img  src='/static/img/bot.png'>
+                        {% endif %}
+                    {% elif j==0 %}
+                        <img  src='/static/img/left.png'>
+                    {% elif j==board_size-1 %}
+                        <img src='/static/img/right.png'>
+                    {% endif %}
+
+                </td>
+            {% endfor %}
+        </tr>
+    {% endfor %}  `;
     }
 
     function change_cell_to_color(row,col,color){
@@ -156,19 +193,19 @@
         
         return img;
     }
-
     function place_a_piece(i,j) {
         // attempt to drop a piece on the board
         if ( room_dict['gaming_status'] && (role=='host' || role=='guest') ){
             // check if it is this player's turn
             console.log(role,room_dict['turn']);
-            console.log(role=='guest')==(room_dict['turn']);
+            console.log((role=='guest')==(room_dict['turn']));
             if ( (role=='guest')==(room_dict['turn']) ){
                 // player's turn
                 let cell=document.getElementById(i+'-'+j);
                 let state=cell.getAttribute('state');
                 if (state==0){
                     // place a piece
+                    console.log('emit sent')
                     socket.emit('place a piece', { 'room_id':{{room_id}},'row':i,'col':j,'role':role,'board_size':room_dict['board_size'] });
                 }
         }else{
@@ -203,10 +240,14 @@
         window.location.replace("http://www.w3schools.com");
     });
 
+    socket.on('message', function(message){
+        // TODO: chat box print message
+        alert(message);
+    });
 
 </script>
 <div id="j-left">   
-    <table style=' border-collapse: collapse;'>
+    <table id="board" style=' border-collapse: collapse;'>
 
     {% for i in range(board_size) %}
         <tr>

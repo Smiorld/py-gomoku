@@ -1,8 +1,12 @@
 from flask import session, request
-from flask_socketio import emit, join_room, leave_room, close_room
+from flask_socketio import emit, send, join_room, leave_room, close_room
+from .text import text
 from .. import socketio, db
 from ..models import Room
 import ast # for converting string to object and vice versa
+
+language='chinese' # default language is chinese for now 
+# TODO: add language selection
 
 def room_to_dict(room):
     return {
@@ -100,6 +104,7 @@ def on_leave(data):
             room.guest_set = '[]'
             room.black = False
             db.session.commit()
+
         if room.host == sid:
             # if the host leaves, check if the guest is still in the room
             if room.guest is not None:
@@ -114,7 +119,7 @@ def on_leave(data):
                 db.session.delete(room)
                 db.session.commit()
                 # inform all players in this room to leave the room
-                emit('leave room', room_to_dict(room), to=room_id, namespace='/gomoku')
+                emit('update room', room_to_dict(room), to=room_id, namespace='/gomoku')
                 close_room(room_id, namespace='/gomoku')
         elif room.guest == sid:
             # if the guest leaves, set guest to None
@@ -152,7 +157,7 @@ def on_start_game(data):
             room.gaming_status = True
             db.session.commit()
             # inform all players in this room to update the room info
-            emit('update room', room_to_dict(room), to=data['room_id'], namespace='/gomoku')
+            emit('update room', room_to_dict(room), to=room_id, namespace='/gomoku')
 
 @socketio.on('place a piece', namespace='/gomoku')
 def on_place_a_piece(data):
@@ -161,14 +166,15 @@ def on_place_a_piece(data):
     room = Room.query.filter_by(id=room_id).first()
     if room is not None:
         if room.gaming_status == True and (room.host == request.sid or room.guest == request.sid):
-            if ( (room.guest==data['role'])==(room.turn)   ):
+            if ( (data['role']=='guest')==(room.turn)   ):
+                print('players turn')
                 # if it's the player's turn
                 # validate the piece
                 host_set= ast.literal_eval(room.host_set)
                 guest_set= ast.literal_eval(room.guest_set)
-                if data['row']<0 or data['row']>=data['board_size'] or \
+                if  data['row']<0 or data['row']>=data['board_size'] or \
                     data['col']<0 or data['col']>=data['board_size'] or \
-                    [data['row'],data['col']] in host_set or \
+                    [data['row'],data['col']] in host_set or            \
                     [data['row'],data['col']] in guest_set:
 
                     # if the piece is already placed or out of range (TODO:error), do nothing
@@ -183,23 +189,74 @@ def on_place_a_piece(data):
                         room.guest_set = str(guest_set)
                     # change the turn
                     room.turn = not room.turn
+                    
+                    db.session.commit()
+
                     # check if the game is over
-                    if check_game_over():
+                    is_game_over=check_game_over(room)
+                    if is_game_over:
                         # TODO: if game is over, reset the room info
                         room.gaming_status = False
                         room.host_set = '[]'
                         room.guest_set = '[]'
                         room.black = not room.black
-                    
-                    db.session.commit()
+                        db.session.commit()
+                        if is_game_over==1:
+                            # host win
+                            send(text[language]['host wins'], to=room_id, namespace='/gomoku')
+                        elif is_game_over==2:
+                            # guest win
+                            send(text[language]['guest wins'], to=room_id, namespace='/gomoku')
+                        else:
+                            # draw
+                            send(text[language]['draw'], to=room_id, namespace='/gomoku')
+
                     # inform all players in this room to update the room info
-                    emit('update room', room_to_dict(room), to=data['room_id'], namespace='/gomoku')
+                    emit('update room', room_to_dict(room), to=room_id, namespace='/gomoku')
                     
 
 
-def check_game_over(): # 0 for not over, 1 for host win, 2 for guest win, 3 for draw
-    return 0
+def check_game_over(room): # 0 for not over, 1 for host win, 2 for guest win, 3 for draw
+    host_set = ast.literal_eval(room.host_set)
+    guest_set = ast.literal_eval(room.guest_set)
+    # check host winning or not
+    if check_win(host_set):
+        return 1
+    elif check_win(guest_set):
+        return 2
+    elif len(host_set)+len(guest_set) == room.board_size*room.board_size:
+        return 3
+    else:
+        return 0
 
+def check_win(piece_set):
+    # check if the piece set is a winning set
+    for piece in piece_set:
+        # check 4 directions: left-down, down, right-down, right
+        if check_direction(piece_set, piece, [1,-1]) or \
+            check_direction(piece_set, piece, [1,0]) or \
+            check_direction(piece_set, piece, [1,1]) or \
+            check_direction(piece_set, piece, [0,1]):
+            return True
+    return False
+
+def check_direction(piece_set, piece, direction):
+    # check if the piece is in a winning set in a direction
+    count = 0
+    for i in range(5):
+        if [piece[0]+i*direction[0], piece[1]+i*direction[1]] in piece_set:
+            count += 1
+        else:
+            break
+    for i in range(1,5):
+        if [piece[0]-i*direction[0], piece[1]-i*direction[1]] in piece_set:
+            count += 1
+        else:
+            break
+    if count >= 5:
+        return True
+    else:
+        return False
 
 
 @socketio.on('disconnect', namespace='/gomoku')
