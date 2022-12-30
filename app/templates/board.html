@@ -9,6 +9,7 @@
     var sid;
     var role;
     var color;
+    var room_dict={};
     function update_board(room) {
         // update the board
         host_set = JSON.parse(room['host_set']);
@@ -16,22 +17,29 @@
         for (let i = 0; i < host_set.length; i++) {
             let row = host_set[i][0];
             let col = host_set[i][1];
-            let cell = document.getElementById(rol + "-" + col);
-            cell.innerHTML=change_cell_to_host(row,col,room['black'],cell.innerHTML);
+            let cell = document.getElementById(row + "-" + col);
+            if (room['black']){
+                cell.innerHTML=change_cell_to_color(row,col,'white');
+            }else{
+                cell.innerHTML=change_cell_to_color(row,col,'black');
+            }
             cell.setAttribute("state", 1);
         }
         for (let i = 0; i < guest_set.length; i++) {
             let row = guest_set[i][0];
             let col = guest_set[i][1];
-            let cell = document.getElementById(rol + "-" + col);
-            cell.innerHTML=change_cell_to_guest(row,col,room['black'],cell.innerHTML);
+            let cell = document.getElementById(row + "-" + col);
+            if (room['black']){
+                cell.innerHTML=change_cell_to_color(row,col,'black');
+            }else{
+                cell.innerHTML=change_cell_to_color(row,col,'white');
+            }
             cell.setAttribute("state", 2);
         }
     }
 
     function update_room_info(room) {
         // update the room info
-        console.log(room)
         let output_panel = document.getElementById("j-right");
         output_panel.innerHTML = "<p id='room_id'>room id: "+room['id']+"</p>\n"+
         "<p id='room_name'>room name: "+room['name']+"</p>\n"+
@@ -41,6 +49,7 @@
         "<p id='board_size'>board size: "+room['board_size']+"</p>\n"+
         "<p id='each_drop_time'>each drop time: "+room['each_drop_time']+"</p>\n"+
         "<p id='gaming_status'>gaming status: "+room['gaming_status']+"</p>\n"+
+        "<p id='turn'>turn: "+room['turn']+"</p>\n"+
         "<p id='host_set'>host set: "+room['host_set']+"</p>\n"+
         "<p id='guest_set'>guest set: "+room['guest_set']+"</p>\n"+
         "<p id='gold_finger_set'>gold finger set: "+room['gold_finger_set']+"</p>\n"+
@@ -72,123 +81,101 @@
             output_panel.innerHTML += "<p id='client_role'>your role is: watcher</p>\n";
             role='watcher';
         }
+        if (role=='host' && !room['gaming_status'] && room['guest']!=null){
+            output_panel.innerHTML += '<button onclick=start_game() class="w3-button w3-blue" style="border-radius:5px" value="Start game">Start game</button>\n';
+        }
 
         
     }
 
-    function change_cell_to_host(row,col,is_white,src){
-        if (is_white){
-            if (row==0){
-                if (col==0){
-                    src='/static/img/left_top_white.png';
-                }else if (col==board_size-1){
-                    src='/static/img/right_top_white.png';
-                }else{
-                    src='/static/img/top_white.png';
-                }
-            }else if (row==board_size-1){
-                if (col==0){
-                    src='/static/img/left_bot_white.png';
-                }else if (col==board_size-1){
-                    src='/static/img/right_bot_white.png';
-                }else{
-                    src='/static/img/bot_white.png';
-                }
-            }else if (col==0){
-                src='/static/img/left_white.png';
-            }else if (col==board_size-1){
-                src='/static/img/right_white.png';
-            }else{
-                src='/static/img/center_white.png';
-            }
+    function start_game(){
+        if (role=='host' && !room_dict['gaming_status'] && room_dict['guest']!=null){
+            let room_id = room_dict['id'];
+            socket.emit('start game', {'room_id':room_id});
         }
         else{
-            if (row==0){
-                if (col==0){
-                    src='/static/img/left_top_black.png';
-                }else if (col==board_size-1){
-                    src='/static/img/right_top_black.png';
-                }else{
-                    src='/static/img/top_black.png';
-                }
-            }else if (row==board_size-1){
-                if (col==0){
-                    src='/static/img/left_bot_black.png';
-                }else if (col==board_size-1){
-                    src='/static/img/right_bot_black.png';
-                }else{
-                    src='/static/img/bot_black.png';
-                }
-            }else if (col==0){
-                src='/static/img/left_black.png';
-            }else if (col==board_size-1){
-                src='/static/img/right_black.png';
-            }else{
-                src='/static/img/center_black.png';
-            }
+            alert('You are not the host or the game has already started!');
         }
-        
-        return src;
     }
 
-    function change_cell_to_guest(row,col,is_black,src){
-        if (is_black){
+    function change_cell_to_color(row,col,color){
+        if (color=='white'){
             if (row==0){
                 if (col==0){
-                    src='/static/img/left_top_black.png';
-                }else if (col==board_size-1){
-                    src='/static/img/right_top_black.png';
+                    img = "<img src='/static/img/left_top_white.png'>";
+                }else if (col==room_dict['board_size']-1){
+                    img = "<img src='/static/img/right_top_white.png'>";
                 }else{
-                    src='/static/img/top_black.png';
+                    img = "<img src='/static/img/top_white.png'>";
                 }
-            }else if (row==board_size-1){
+            }else if (row==room_dict['board_size']-1){
                 if (col==0){
-                    src='/static/img/left_bot_black.png';
-                }else if (col==board_size-1){
-                    src='/static/img/right_bot_black.png';
+                    img = "<img src='/static/img/left_bot_white.png'>";
+                }else if (col==room_dict['board_size']-1){
+                    img = "<img src='/static/img/right_bot_white.png'>";
                 }else{
-                    src='/static/img/bot_black.png';
+                    img = "<img src='/static/img/bot_white.png'>";
                 }
-            }else if (col==0){
-                src='/static/img/left_black.png';
-            }else if (col==board_size-1){
-                src='/static/img/right_black.png';
             }else{
-                src='/static/img/center_black.png';
+                if (col==0){
+                    img = "<img src='/static/img/left_white.png'>";
+                }else if (col==room_dict['board_size']-1){
+                    img = "<img src='/static/img/right_white.png'>";
+                }else{
+                    img = "<img src='/static/img/center_white.png'>";
+                }
             }
-        }
-        else{
+        }else if (color=='black'){
             if (row==0){
                 if (col==0){
-                    src='/static/img/left_top_white.png';
-                }else if (col==board_size-1){
-                    src='/static/img/right_top_white.png';
+                    img = "<img src='/static/img/left_top_black.png'>";
+                }else if (col==room_dict['board_size']-1){
+                    img = "<img src='/static/img/right_top_black.png'>";
                 }else{
-                    src='/static/img/top_white.png';
+                    img = "<img src='/static/img/top_black.png'>";
                 }
-            }else if (row==board_size-1){
+            }else if (row==room_dict['board_size']-1){
                 if (col==0){
-                    src='/static/img/left_bot_white.png';
-                }else if (col==board_size-1){
-                    src='/static/img/right_bot_white.png';
+                    img = "<img src='/static/img/left_bot_black.png'>";
+                }else if (col==room_dict['board_size']-1){
+                    img = "<img src='/static/img/right_bot_black.png'>";
                 }else{
-                    src='/static/img/bot_white.png';
+                    img = "<img src='/static/img/bot_black.png'>";
                 }
-            }else if (col==0){
-                src='/static/img/left_white.png';
-            }else if (col==board_size-1){
-                src='/static/img/right_white.png';
             }else{
-                src='/static/img/center_white.png';
+                if (col==0){
+                    img = "<img src='/static/img/left_black.png'>";
+                }else if (col==room_dict['board_size']-1){
+                    img = "<img src='/static/img/right_black.png'>";
+                }else{
+                    img = "<img src='/static/img/center_black.png'>";
+                }
             }
         }
+
         
-        return src;
+        return img;
     }
 
-    function drop_a_piece(i,j) {
+    function place_a_piece(i,j) {
         // attempt to drop a piece on the board
-        
+        if ( room_dict['gaming_status'] && (role=='host' || role=='guest') ){
+            // check if it is this player's turn
+            console.log(role,room_dict['turn']);
+            console.log(role=='guest')==(room_dict['turn']);
+            if ( (role=='guest')==(room_dict['turn']) ){
+                // player's turn
+                let cell=document.getElementById(i+'-'+j);
+                let state=cell.getAttribute('state');
+                if (state==0){
+                    // place a piece
+                    socket.emit('place a piece', { 'room_id':{{room_id}},'row':i,'col':j,'role':role,'board_size':room_dict['board_size'] });
+                }
+        }else{
+            // player is watcher or game not started, do nothing.
+        }
+
+        };
     }
 
     socket.on('message', function(msg) {
@@ -205,6 +192,7 @@
 
     socket.on('update room', function(room) {
         // update the room information
+        room_dict=room;
         update_board(room);
         update_room_info(room);
     });
@@ -223,7 +211,7 @@
     {% for i in range(board_size) %}
         <tr>
             {% for j in range(board_size) %}
-                <td onclick=drop_a_piece({{i}},{{j}}) class="cell" id="{{i}}-{{j}}" state=0>
+                <td onclick=place_a_piece({{i}},{{j}}) class="cell" id="{{i}}-{{j}}" state=0>
                     {% if i > 0 and board_size-1 > i and j > 0 and board_size-1 > j %}
                         <img  src='/static/img/center.png'>
                     {% elif i==0  %}

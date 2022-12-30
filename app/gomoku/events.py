@@ -14,6 +14,7 @@ def room_to_dict(room):
         'board_size': room.board_size,
         'each_drop_time': room.each_drop_time,
         'gaming_status' : room.gaming_status,
+        'turn' : room.turn,
         'host_set'  : room.host_set,
         'guest_set' : room.guest_set,
         'gold_finger_set' : room.gold_finger_set,
@@ -92,11 +93,13 @@ def on_leave(data):
     if room is not None:
         # check if room is empty. though not necessary, just in case
         if room.gaming_status == True and (room.host == sid or room.guest == sid):
-            # if game is started and the player leaves is either the host or the guest, end the game
+            # if game is started and the player left is either the host or the guest, end the game
             room.gaming_status = False
+            room.turn = False
             room.host_set = '[]'
             room.guest_set = '[]'
             room.black = False
+            db.session.commit()
         if room.host == sid:
             # if the host leaves, check if the guest is still in the room
             if room.guest is not None:
@@ -136,6 +139,67 @@ def on_leave(data):
     else:
         # room is not found, do nothing
         pass
+
+@socketio.on('start game', namespace='/gomoku')
+def on_start_game(data):
+    room_id=data['room_id']
+    room = Room.query.filter_by(id=room_id).first()
+    if room is not None:
+        if room.host == request.sid and room.guest is not None and room.gaming_status == False:
+            # only host can start the game
+            room.host_set = '[]'
+            room.guest_set = '[]'
+            room.gaming_status = True
+            db.session.commit()
+            # inform all players in this room to update the room info
+            emit('update room', room_to_dict(room), to=data['room_id'], namespace='/gomoku')
+
+@socketio.on('place a piece', namespace='/gomoku')
+def on_place_a_piece(data):
+    # validate whether its the player's turn
+    room_id=data['room_id']
+    room = Room.query.filter_by(id=room_id).first()
+    if room is not None:
+        if room.gaming_status == True and (room.host == request.sid or room.guest == request.sid):
+            if ( (room.guest==data['role'])==(room.turn)   ):
+                # if it's the player's turn
+                # validate the piece
+                host_set= ast.literal_eval(room.host_set)
+                guest_set= ast.literal_eval(room.guest_set)
+                if data['row']<0 or data['row']>=data['board_size'] or \
+                    data['col']<0 or data['col']>=data['board_size'] or \
+                    [data['row'],data['col']] in host_set or \
+                    [data['row'],data['col']] in guest_set:
+
+                    # if the piece is already placed or out of range (TODO:error), do nothing
+                    pass
+                else:
+                    # place the piece
+                    if data['role']=='host':
+                        host_set.append([data['row'],data['col']])
+                        room.host_set = str(host_set)
+                    else:
+                        guest_set.append([data['row'],data['col']])
+                        room.guest_set = str(guest_set)
+                    # change the turn
+                    room.turn = not room.turn
+                    # check if the game is over
+                    if check_game_over():
+                        # TODO: if game is over, reset the room info
+                        room.gaming_status = False
+                        room.host_set = '[]'
+                        room.guest_set = '[]'
+                        room.black = not room.black
+                    
+                    db.session.commit()
+                    # inform all players in this room to update the room info
+                    emit('update room', room_to_dict(room), to=data['room_id'], namespace='/gomoku')
+                    
+
+
+def check_game_over(): # 0 for not over, 1 for host win, 2 for guest win, 3 for draw
+    return 0
+
 
 
 @socketio.on('disconnect', namespace='/gomoku')
