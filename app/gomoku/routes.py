@@ -9,11 +9,26 @@ from flask import (
     make_response,
 )
 from . import gomoku
+from .text import text
+from .. import db
+from ..models import User, Room
 
-@gomoku.route("/room/<int:room_number>/<int:player_number>", methods=["GET", "POST"])
-def room(room_number, player_number):
+language='chinese' # default language is chinese for now 
+# TODO: add language selection
 
-    return render_template("board.html", board_size=13, room_number=room_number, player_number=player_number)
+@gomoku.route("/room/<int:room_id>", methods=["GET", "POST"])
+def room(room_id):
+    if isinstance(room_id,int) and room_id<100 and room_id>0:
+        room = Room.query.filter_by(id=room_id).first()
+        if room is None:
+            #TODO: config the room using the configs stored in the User database.
+            return render_template("board.html", board_size=15, room_id=room_id)
+        else:
+            return render_template("board.html", board_size=room.board_size, room_id=room_id)
+    else:
+        return text[language]['invalid_room_id']
+        # TODO: better error page with redirect to the home page
+    
 
 @gomoku.route("/drop_a_piece/<int:room_number>/<int:player_number>/<int:row>/<int:column>", methods=["POST"])
 def drop_a_piece(room_number, player_number, row, column):

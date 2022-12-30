@@ -9,7 +9,7 @@ socketio = SocketIO()
 db= SQLAlchemy()
 login_manager = LoginManager()
 
-def create_app(debug=False) -> Flask:
+def create_app(make_db=False,debug=False) -> Flask:
 
 
     app = Flask(__name__)
@@ -30,6 +30,14 @@ def create_app(debug=False) -> Flask:
     app.register_blueprint(gomoku_blueprint)
 
     db.init_app(app)
+    if make_db:
+        with app.app_context():
+            from . import models
+            db.drop_all()
+            db.create_all()
+            db.session.commit()
+
+
     socketio.init_app(app)
     login_manager.init_app(app)
     return app

@@ -8,41 +8,202 @@
     function drop_a_piece(i,j) {
         alert("You clicked on a piece "+i+" "+j);
     }
+    var socket = io('/gomoku');
+
+    function update_board(room) {
+        // update the board
+        host_set = JSON.parse(room['host_set']);
+        guest_set = JSON.parse(room['guest_set']);
+        for (let i = 0; i < host_set.length; i++) {
+            let row = host_set[i][0];
+            let col = host_set[i][1];
+            let cell = document.getElementById(rol + "-" + col);
+            cell.innerHTML=change_cell_to_host(row,col,room['black'],cell.innerHTML);
+            cell.setAttribute("state", 1);
+        }
+        for (let i = 0; i < guest_set.length; i++) {
+            let row = guest_set[i][0];
+            let col = guest_set[i][1];
+            let cell = document.getElementById(rol + "-" + col);
+            cell.innerHTML=change_cell_to_guest(row,col,room['black'],cell.innerHTML);
+            cell.setAttribute("state", 2);
+        }
+    }
+
+    function cheange_cell_to_host(row,col,is_white,src){
+        if (is_white){
+            if (row==0){
+                if (col==0){
+                    src='/static/img/left_top_white.png';
+                }else if (col==board_size-1){
+                    src='/static/img/right_top_white.png';
+                }else{
+                    src='/static/img/top_white.png';
+                }
+            }else if (row==board_size-1){
+                if (col==0){
+                    src='/static/img/left_bot_white.png';
+                }else if (col==board_size-1){
+                    src='/static/img/right_bot_white.png';
+                }else{
+                    src='/static/img/bot_white.png';
+                }
+            }else if (col==0){
+                src='/static/img/left_white.png';
+            }else if (col==board_size-1){
+                src='/static/img/right_white.png';
+            }else{
+                src='/static/img/center_white.png';
+            }
+        }
+        else{
+            if (row==0){
+                if (col==0){
+                    src='/static/img/left_top_black.png';
+                }else if (col==board_size-1){
+                    src='/static/img/right_top_black.png';
+                }else{
+                    src='/static/img/top_black.png';
+                }
+            }else if (row==board_size-1){
+                if (col==0){
+                    src='/static/img/left_bot_black.png';
+                }else if (col==board_size-1){
+                    src='/static/img/right_bot_black.png';
+                }else{
+                    src='/static/img/bot_black.png';
+                }
+            }else if (col==0){
+                src='/static/img/left_black.png';
+            }else if (col==board_size-1){
+                src='/static/img/right_black.png';
+            }else{
+                src='/static/img/center_black.png';
+            }
+        }
+        
+        return src;
+    }
+
+    function change_cell_to_guest(row,col,is_black,src){
+        if (is_black){
+            if (row==0){
+                if (col==0){
+                    src='/static/img/left_top_black.png';
+                }else if (col==board_size-1){
+                    src='/static/img/right_top_black.png';
+                }else{
+                    src='/static/img/top_black.png';
+                }
+            }else if (row==board_size-1){
+                if (col==0){
+                    src='/static/img/left_bot_black.png';
+                }else if (col==board_size-1){
+                    src='/static/img/right_bot_black.png';
+                }else{
+                    src='/static/img/bot_black.png';
+                }
+            }else if (col==0){
+                src='/static/img/left_black.png';
+            }else if (col==board_size-1){
+                src='/static/img/right_black.png';
+            }else{
+                src='/static/img/center_black.png';
+            }
+        }
+        else{
+            if (row==0){
+                if (col==0){
+                    src='/static/img/left_top_white.png';
+                }else if (col==board_size-1){
+                    src='/static/img/right_top_white.png';
+                }else{
+                    src='/static/img/top_white.png';
+                }
+            }else if (row==board_size-1){
+                if (col==0){
+                    src='/static/img/left_bot_white.png';
+                }else if (col==board_size-1){
+                    src='/static/img/right_bot_white.png';
+                }else{
+                    src='/static/img/bot_white.png';
+                }
+            }else if (col==0){
+                src='/static/img/left_white.png';
+            }else if (col==board_size-1){
+                src='/static/img/right_white.png';
+            }else{
+                src='/static/img/center_white.png';
+            }
+        }
+        
+        return src;
+    }
+
+    socket.on('message', function(msg) {
+        // when receive a message from the server, display it on the screen
+        alert(msg);
+    });
+
+    socket.on('connect', function() {
+        // if successfully connect to the server, attempt to join the room
+        // account system not implemented yet, so a player is allowed to join multiple rooms for multiple times.
+        socket.emit('join', {'room_id':{{room_id}}});
+    });
+
+    socket.on('update room', function(data) {
+        // update the room information
+        room=data['room'];
+        update_board(room);
+    });
+
+    socket.on('room reject', function(data){
+        // reject by the room for some reason
+        alert('either the room is full or you are already in the room');
+        window.location.replace("http://www.w3schools.com")
+    });
+
+
 </script>
+<div id="j-left">   
+    <table style=' border-collapse: collapse;'>
 
-<table style=' border-collapse: collapse;'>
-
-{% for i in range(board_size) %}
-    <tr>
-        {% for j in range(board_size) %}
-            <td onclick=drop_a_piece({{i}},{{j}}) class="cell" id="{{i}}-{{j}}">
-                {% if i > 0 and board_size-1 > i and j > 0 and board_size-1 > j %}
-                    <img  src='/static/img/center.png'>
-                {% elif i==0  %}
-                    {% if j==0  %}
-                        <img  src='/static/img/left_top.png'>
+    {% for i in range(board_size) %}
+        <tr>
+            {% for j in range(board_size) %}
+                <td onclick=drop_a_piece({{i}},{{j}}) class="cell" id="{{i}}-{{j}}" state=0>
+                    {% if i > 0 and board_size-1 > i and j > 0 and board_size-1 > j %}
+                        <img  src='/static/img/center.png'>
+                    {% elif i==0  %}
+                        {% if j==0  %}
+                            <img  src='/static/img/left_top.png'>
+                        {% elif j==board_size-1 %}
+                            <img  src='/static/img/right_top.png'>
+                        {% else %}
+                            <img  src='/static/img/top.png'>
+                        {% endif %}
+                    {% elif i==board_size-1 %}
+                        {% if j==0  %}
+                            <img  src='/static/img/left_bot.png'>
+                        {% elif j==board_size-1 %}
+                            <img  src='/static/img/right_bot.png'>
+                        {% else %}
+                            <img  src='/static/img/bot.png'>
+                        {% endif %}
+                    {% elif j==0 %}
+                        <img  src='/static/img/left.png'>
                     {% elif j==board_size-1 %}
-                        <img  src='/static/img/right_top.png'>
-                    {% else %}
-                        <img  src='/static/img/top.png'>
+                        <img src='/static/img/right.png'>
                     {% endif %}
-                {% elif i==board_size-1 %}
-                    {% if j==0  %}
-                        <img  src='/static/img/left_bot.png'>
-                    {% elif j==board_size-1 %}
-                        <img  src='/static/img/right_bot.png'>
-                    {% else %}
-                        <img  src='/static/img/bot.png'>
-                    {% endif %}
-                {% elif j==0 %}
-                    <img  src='/static/img/left.png'>
-                {% elif j==board_size-1 %}
-                    <img src='/static/img/right.png'>
-                {% endif %}
 
-            </td>
-        {% endfor %}
-    </tr>
-{% endfor %}
-</table>
+                </td>
+            {% endfor %}
+        </tr>
+    {% endfor %}
+    </table>
+</div>
+
+<div id="j-right">
+
+</div>
 {% endblock content %}

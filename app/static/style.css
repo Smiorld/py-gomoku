@@ -355,14 +355,14 @@ input[type="text"] .tt {
 
 #j-left {
     float: left;
-    width: 55%;
-    height: 90vh;
+    width: 70%;
+    height: 95vh;
     overflow: scroll;
 }
 #j-right {
     float: left;
-    width: 45%;
-    height: 90vh;
+    width: 30%;
+    height: 95vh;
     overflow: scroll;
 }
 
