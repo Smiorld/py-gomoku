@@ -22,9 +22,9 @@ def room(room_id):
         room = Room.query.filter_by(id=room_id).first()
         if room is None:
             #TODO: config the room using the configs stored in the User database.
-            return render_template("board.html", board_size=15, room_id=room_id)
+            return render_template("board.html", board_size=15, room_id=room_id, text=text[language])
         else:
-            return render_template("board.html", board_size=room.board_size, room_id=room_id)
+            return render_template("board.html", board_size=room.board_size, room_id=room_id, text=text[language])
     else:
         return text[language]['invalid_room_id']
         # TODO: better error page with redirect to the home page

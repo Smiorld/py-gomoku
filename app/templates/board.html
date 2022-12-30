@@ -5,11 +5,10 @@
 
 {% block content %}
 <script>
-    function drop_a_piece(i,j) {
-        alert("You clicked on a piece "+i+" "+j);
-    }
     var socket = io('/gomoku');
-
+    var sid;
+    var role;
+    var color;
     function update_board(room) {
         // update the board
         host_set = JSON.parse(room['host_set']);
@@ -30,7 +29,54 @@
         }
     }
 
-    function cheange_cell_to_host(row,col,is_white,src){
+    function update_room_info(room) {
+        // update the room info
+        console.log(room)
+        let output_panel = document.getElementById("j-right");
+        output_panel.innerHTML = "<p id='room_id'>room id: "+room['id']+"</p>\n"+
+        "<p id='room_name'>room name: "+room['name']+"</p>\n"+
+        "<p id='room_host'>room host: "+room['host']+"</p>\n"+
+        "<p id='room_guest'>room guest: "+room['guest']+"</p>\n"+
+        "<p id='room_black'>room black: "+room['black']+"</p>\n"+
+        "<p id='board_size'>board size: "+room['board_size']+"</p>\n"+
+        "<p id='each_drop_time'>each drop time: "+room['each_drop_time']+"</p>\n"+
+        "<p id='gaming_status'>gaming status: "+room['gaming_status']+"</p>\n"+
+        "<p id='host_set'>host set: "+room['host_set']+"</p>\n"+
+        "<p id='guest_set'>guest set: "+room['guest_set']+"</p>\n"+
+        "<p id='gold_finger_set'>gold finger set: "+room['gold_finger_set']+"</p>\n"+
+        "<p id='watcher_number'>watcher number: "+room['watcher_number']+"</p>\n"+
+        "<p id='watcher_list'>watcher list: "+room['watcher_list']+"</p>\n"+
+        "----------------------------------------\n"+
+        "<p id='client_role'>your sid is: "+sid+"</p>\n";
+        if (room['host']==sid){
+            output_panel.innerHTML += "<p id='client_role'>your role is: host</p>\n";
+            role='host';
+            if (room['black']){
+                output_panel.innerHTML += "<p id='client_role'>your color is: white</p>\n";
+                color='white';
+            }else{
+                output_panel.innerHTML += "<p id='client_role'>your color is: black</p>\n";
+                color='black';
+            }
+        }else if (room['guest']==sid){
+            output_panel.innerHTML += "<p id='client_role'>your role is: guest</p>\n";
+            role='guest';
+            if (room['black']){
+                output_panel.innerHTML += "<p id='client_role'>your color is: black</p>\n";
+                color='black';
+            }else{
+                output_panel.innerHTML += "<p id='client_role'>your color is: white</p>\n";
+                color='white';
+            }
+        }else{
+            output_panel.innerHTML += "<p id='client_role'>your role is: watcher</p>\n";
+            role='watcher';
+        }
+
+        
+    }
+
+    function change_cell_to_host(row,col,is_white,src){
         if (is_white){
             if (row==0){
                 if (col==0){
@@ -140,6 +186,11 @@
         return src;
     }
 
+    function drop_a_piece(i,j) {
+        // attempt to drop a piece on the board
+        
+    }
+
     socket.on('message', function(msg) {
         // when receive a message from the server, display it on the screen
         alert(msg);
@@ -149,18 +200,19 @@
         // if successfully connect to the server, attempt to join the room
         // account system not implemented yet, so a player is allowed to join multiple rooms for multiple times.
         socket.emit('join', {'room_id':{{room_id}}});
+        sid= socket.id;
     });
 
-    socket.on('update room', function(data) {
+    socket.on('update room', function(room) {
         // update the room information
-        room=data['room'];
         update_board(room);
+        update_room_info(room);
     });
 
     socket.on('room reject', function(data){
         // reject by the room for some reason
-        alert('either the room is full or you are already in the room');
-        window.location.replace("http://www.w3schools.com")
+        alert({{text['room reject']}});
+        window.location.replace("http://www.w3schools.com");
     });
 
 
@@ -204,6 +256,7 @@
 </div>
 
 <div id="j-right">
+
 
 </div>
 {% endblock content %}
