@@ -192,6 +192,10 @@ def on_place_a_piece(data):
                     
                     db.session.commit()
 
+
+                    # inform all players in this room to update the room info
+                    emit('update room', room_to_dict(room), to=room_id, namespace='/gomoku')
+
                     # check if the game is over
                     is_game_over=check_game_over(room)
                     if is_game_over:
@@ -204,15 +208,21 @@ def on_place_a_piece(data):
                         if is_game_over==1:
                             # host win
                             send(text[language]['host wins'], to=room_id, namespace='/gomoku')
+                            
+                            # inform all players in this room to update the room info
+                            emit('update room', room_to_dict(room), to=room_id, namespace='/gomoku')
                         elif is_game_over==2:
                             # guest win
                             send(text[language]['guest wins'], to=room_id, namespace='/gomoku')
+                            
+                            # inform all players in this room to update the room info
+                            emit('update room', room_to_dict(room), to=room_id, namespace='/gomoku')
                         else:
                             # draw
                             send(text[language]['draw'], to=room_id, namespace='/gomoku')
 
-                    # inform all players in this room to update the room info
-                    emit('update room', room_to_dict(room), to=room_id, namespace='/gomoku')
+                            # inform all players in this room to update the room info
+                            emit('update room', room_to_dict(room), to=room_id, namespace='/gomoku')
                     
 
 
