@@ -61,33 +61,44 @@
             output_panel.innerHTML += "<p id='client_role'>your role is: host</p>\n";
             role='host';
             if (room['black']){
-                output_panel.innerHTML += "<p id='client_role'>your color is: white</p>\n";
+                output_panel.innerHTML += "<p id='client_role'>your color is: white <img  src='/static/img/white.png'></p>\n";
                 color='white';
             }else{
-                output_panel.innerHTML += "<p id='client_role'>your color is: black</p>\n";
+                output_panel.innerHTML += "<p id='client_role'>your color is: black <img  src='/static/img/black.png'></p>\n";
                 color='black';
             }
         }else if (room['guest']==sid){
             output_panel.innerHTML += "<p id='client_role'>your role is: guest</p>\n";
             role='guest';
             if (room['black']){
-                output_panel.innerHTML += "<p id='client_role'>your color is: black</p>\n";
+                output_panel.innerHTML += "<p id='client_role'>your color is: black <img  src='/static/img/black.png'></p>\n";
                 color='black';
             }else{
-                output_panel.innerHTML += "<p id='client_role'>your color is: white</p>\n";
+                output_panel.innerHTML += "<p id='client_role'>your color is: white <img  src='/static/img/white.png'> </p>\n";
                 color='white';
             }
         }else{
             output_panel.innerHTML += "<p id='client_role'>your role is: watcher</p>\n";
             role='watcher';
         }
+        output_panel.innerHTML+= "----------------------------------------\n";
         // start game button for host
         if (role=='host' && !room['gaming_status'] && room['guest']!=null){
             output_panel.innerHTML += '<button onclick=announce_start_game() class="w3-button w3-blue" style="border-radius:5px" value="Start game">Start game</button>\n';
         }
+        // display game status
+        if (room['gaming_status']){
+            output_panel.innerHTML += '<h1 id="game_status">Game is on</h1>\n';
+        }else{
+            if(room['guest']==null)
+                output_panel.innerHTML += '<h1 id="game_status">Waiting for guest</h1>\n';
+            else
+                output_panel.innerHTML += '<h1 id="game_status">Waiting for host to start game</h1>\n';
+        }
         // display "It's your turn" for host and guest
         if ( (room['gaming_status'] && role=='host' && !room['turn']) || (room['gaming_status'] && role=='guest' && room['turn']) ) {
             output_panel.innerHTML += '<h1 id="your_turn">It\'s your turn</h1>\n';
+            //TODO: add a timer
         }
 
         
@@ -103,9 +114,6 @@
             alert('You are not the host or the game has already started!');
         }
     }
-
-    
-
 
 
     function reset_board(){
