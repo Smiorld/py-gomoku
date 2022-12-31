@@ -81,8 +81,13 @@
             output_panel.innerHTML += "<p id='client_role'>your role is: watcher</p>\n";
             role='watcher';
         }
+        // start game button for host
         if (role=='host' && !room['gaming_status'] && room['guest']!=null){
             output_panel.innerHTML += '<button onclick=announce_start_game() class="w3-button w3-blue" style="border-radius:5px" value="Start game">Start game</button>\n';
+        }
+        // display "It's your turn" for host and guest
+        if ( (room['gaming_status'] && role=='host' && !room['turn']) || (room['gaming_status'] && role=='guest' && room['turn']) ) {
+            output_panel.innerHTML += '<h1 id="your_turn">It\'s your turn</h1>\n';
         }
 
         

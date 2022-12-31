@@ -27,9 +27,6 @@ def room_to_dict(room):
     }
 
 
-@socketio.on('my event')
-def handle_my_custom_event(arg1):
-    print('received args: ' + arg1['data'] )
 
 @socketio.on('join', namespace='/gomoku')
 def on_join(data):
@@ -167,7 +164,6 @@ def on_place_a_piece(data):
     if room is not None:
         if room.gaming_status == True and (room.host == request.sid or room.guest == request.sid):
             if ( (data['role']=='guest')==(room.turn)   ):
-                print('players turn')
                 # if it's the player's turn
                 # validate the piece
                 host_set= ast.literal_eval(room.host_set)
