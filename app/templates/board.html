@@ -82,13 +82,13 @@
             role='watcher';
         }
         if (role=='host' && !room['gaming_status'] && room['guest']!=null){
-            output_panel.innerHTML += '<button onclick=start_game() class="w3-button w3-blue" style="border-radius:5px" value="Start game">Start game</button>\n';
+            output_panel.innerHTML += '<button onclick=announce_start_game() class="w3-button w3-blue" style="border-radius:5px" value="Start game">Start game</button>\n';
         }
 
         
     }
 
-    function start_game(){
+    function announce_start_game(){
         if (role=='host' && !room_dict['gaming_status'] && room_dict['guest']!=null){
             let room_id = room_dict['id'];
             reset_board();
@@ -98,6 +98,10 @@
             alert('You are not the host or the game has already started!');
         }
     }
+
+    
+
+
 
     function reset_board(){
         board=document.getElementById("board");
@@ -238,6 +242,14 @@
         // reject by the room for some reason
         alert({{text['room reject']}});
         window.location.replace("http://www.w3schools.com");
+    });
+
+    socket.on('game start', function(data){
+        // game start
+        // update the room information
+        room_dict=room;
+        reset_board(room);
+        update_room_info(room);
     });
 
 </script>

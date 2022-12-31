@@ -157,7 +157,7 @@ def on_start_game(data):
             room.gaming_status = True
             db.session.commit()
             # inform all players in this room to update the room info
-            emit('update room', room_to_dict(room), to=room_id, namespace='/gomoku')
+            emit('game start', room_to_dict(room), to=room_id, namespace='/gomoku')
 
 @socketio.on('place a piece', namespace='/gomoku')
 def on_place_a_piece(data):
