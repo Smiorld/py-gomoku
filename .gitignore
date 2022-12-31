@@ -6,3 +6,5 @@ x*
 logs*
 *Pipfile*
 .idea
+.env
+.vscode
