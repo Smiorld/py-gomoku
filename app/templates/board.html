@@ -119,7 +119,6 @@
     function announce_start_game(){
         if (role=='host' && !room_dict['gaming_status'] && room_dict['guest']!=null){
             let room_id = room_dict['id'];
-            reset_board();
             socket.emit('start game', {'room_id':room_id});
         }
         else{

@@ -4,9 +4,12 @@ from .text import text
 from .. import socketio, db
 from ..models import Room
 import ast # for converting string to object and vice versa
+from threading import Timer
 
 language='chinese' # default language is chinese for now 
 # TODO: add language selection
+
+timer_dict={}
 
 def room_to_dict(room):
     return {
@@ -26,7 +29,20 @@ def room_to_dict(room):
         'watcher_list': room.watcher_list
     }
 
+def turn_over_time(room_id, room): # one player loses because of time out
+    if room is not None:
+        if room.turn:
+            # guest loses because of time out
+            game_over(room_id, room, 1)
+        else:
+            # host loses because of time out
+            game_over(room_id, room, 2)
 
+def reset_timer(room):
+    if room.id in timer_dict:
+        timer_dict[room.id].cancel()
+        timer_dict[room.id] = Timer(room.each_turn_time, turn_over_time, [room.id, room])
+        timer_dict[room.id].start()
 
 @socketio.on('join', namespace='/gomoku')
 def on_join(data):
@@ -154,6 +170,8 @@ def on_start_game(data):
             room.gaming_status = True
             db.session.commit()
             # inform all players in this room to update the room info
+            timer_dict.update( { room_id : Timer( room.each_turn_time, turn_over_time, (room_id, room) ) } )  
+            timer_dict[room_id].start()
             emit('game start', room_to_dict(room), to=room_id, namespace='/gomoku')
 
 @socketio.on('place a piece', namespace='/gomoku')
@@ -189,36 +207,11 @@ def on_place_a_piece(data):
                     db.session.commit()
 
 
-                    # inform all players in this room to update the room info
-                    emit('update room', room_to_dict(room), to=room_id, namespace='/gomoku')
 
                     # check if the game is over
-                    is_game_over=check_game_over(room)
-                    if is_game_over:
-                        # TODO: if game is over, reset the room info
-                        room.gaming_status = False
-                        room.host_set = '[]'
-                        room.guest_set = '[]'
-                        room.black = not room.black
-                        db.session.commit()
-                        if is_game_over==1:
-                            # host win
-                            send(text[language]['host wins'], to=room_id, namespace='/gomoku')
-                            
-                            # inform all players in this room to update the room info
-                            emit('update room', room_to_dict(room), to=room_id, namespace='/gomoku')
-                        elif is_game_over==2:
-                            # guest win
-                            send(text[language]['guest wins'], to=room_id, namespace='/gomoku')
-                            
-                            # inform all players in this room to update the room info
-                            emit('update room', room_to_dict(room), to=room_id, namespace='/gomoku')
-                        else:
-                            # draw
-                            send(text[language]['draw'], to=room_id, namespace='/gomoku')
-
-                            # inform all players in this room to update the room info
-                            emit('update room', room_to_dict(room), to=room_id, namespace='/gomoku')
+                    
+                    game_over(room_id, room, check_game_over(room))
+                    
                     
 
 def check_game_over(room): # 0 for not over, 1 for host win, 2 for guest win, 3 for draw
@@ -263,6 +256,39 @@ def check_direction(piece_set, piece, direction):
     else:
         return False
 
+def game_over(room_id, room, is_game_over): # is_game_over: 0 for not over, 1 for host win, 2 for guest win, 3 for draw
+    if is_game_over:
+        # TODO: if game is over, reset the room info
+        room.gaming_status = False
+        room.host_set = '[]'
+        room.guest_set = '[]'
+        room.black = not room.black
+        db.session.commit()
+        if is_game_over==1:
+            # host win
+            send(text[language]['host wins'], to=room_id, namespace='/gomoku')
+            timer_dict[room.id].cancel()
+            # inform all players in this room to update the room info
+            emit('update room', room_to_dict(room), to=room_id, namespace='/gomoku')
+        elif is_game_over==2:
+            # guest win
+            send(text[language]['guest wins'], to=room_id, namespace='/gomoku')
+            timer_dict[room.id].cancel()
+            # inform all players in this room to update the room info
+            emit('update room', room_to_dict(room), to=room_id, namespace='/gomoku')
+        else:
+            # draw
+            send(text[language]['draw'], to=room_id, namespace='/gomoku')
+            timer_dict[room.id].cancel()
+            # inform all players in this room to update the room info
+            emit('update room', room_to_dict(room), to=room_id, namespace='/gomoku')
+    else:
+        # if game is not over, reset the timer
+        timer_dict[room_id].cancel()
+        timer_dict[room_id] = Timer( room.each_turn_time, turn_over_time, (room_id, room) )
+        timer_dict[room_id].start()
+        # inform all players in this room to update the room info
+        emit('update room', room_to_dict(room), to=room_id, namespace='/gomoku')
 
 @socketio.on('disconnect', namespace='/gomoku')
 def on_disconnect():
