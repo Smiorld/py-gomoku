@@ -47,7 +47,7 @@
         "<p id='room_guest'>room guest: "+room['guest']+"</p>\n"+
         "<p id='room_black'>room black: "+room['black']+"</p>\n"+
         "<p id='board_size'>board size: "+room['board_size']+"</p>\n"+
-        "<p id='each_drop_time'>each drop time: "+room['each_drop_time']+"</p>\n"+
+        "<p id='each_turn_time'>each drop time: "+room['each_turn_time']+"</p>\n"+
         "<p id='gaming_status'>gaming status: "+room['gaming_status']+"</p>\n"+
         "<p id='turn'>turn: "+room['turn']+"</p>\n"+
         "<p id='host_set'>host set: "+room['host_set']+"</p>\n"+
@@ -81,7 +81,7 @@
             output_panel.innerHTML += "<p id='client_role'>your role is: watcher</p>\n";
             role='watcher';
         }
-        output_panel.innerHTML+= "----------------------------------------\n";
+        output_panel.innerHTML+= "<p>----------------------------------------</p>\n";
         // start game button for host
         if (role=='host' && !room['gaming_status'] && room['guest']!=null){
             output_panel.innerHTML += '<button onclick=announce_start_game() class="w3-button w3-blue" style="border-radius:5px" value="Start game">Start game</button>\n';
@@ -97,8 +97,20 @@
         }
         // display "It's your turn" for host and guest
         if ( (room['gaming_status'] && role=='host' && !room['turn']) || (room['gaming_status'] && role=='guest' && room['turn']) ) {
-            output_panel.innerHTML += '<h1 id="your_turn">It\'s your turn</h1>\n';
-            //TODO: add a timer
+            output_panel.innerHTML += '<h1 id="your_turn">It\'s your turn. Time left:</h1>\n';
+            //TODO: add a ugly timer
+            output_panel.innerHTML += '<h1 id="countdown_timer">'+(room_dict['each_turn_time']-5)+'</h1>\n';
+            setInterval(function(){
+                let timer = document.getElementById("countdown_timer");
+                if (timer!=null){
+                    let time_left = parseInt(timer.innerHTML);
+                    if (time_left>0){
+                        timer.innerHTML = time_left-1;
+                    }// it's a fake timer. really logic is on serverside.
+                
+                }
+            }, 1000);
+
         }
 
         
@@ -261,7 +273,7 @@
         // game start
         // update the room information
         room_dict=room;
-        reset_board(room);
+        reset_board();
         update_room_info(room);
     });
 

@@ -22,7 +22,7 @@ class Room(db.Model):
     # guest=db.Column(db.Integer, db.ForeignKey("user.id"), nullable=True, unique=True)   # TODO: use the correct token to mark who is the guest
     black=db.Column(db.Boolean, nullable=False, default=False)  # 0 for host, 1 for guest. TODO: play rps to decide who is black if it is the first game bettween 2 players.
     board_size=db.Column(db.Integer, nullable=False, default=15)
-    each_drop_time=db.Column(db.Integer, nullable=False, default=35) # this is servertime. for client, it will substract 5.
+    each_turn_time=db.Column(db.Integer, nullable=False, default=35) # this is servertime. for client, it will substract 5.
     gaming_status=db.Column(db.Boolean, nullable=False, default=False)  # 0 for not gaming, 1 for gaming
     turn=db.Column(db.Boolean, nullable=False, default=False) # 0 for host, 1 for guest. when gaming_status is 0, this value is meaningless.
     host_set=db.Column(db.Text, nullable=True, default='[]')   # an array of 2 numbers. 1st number is the row, 2nd number is the column. TODO: use json to store the array.

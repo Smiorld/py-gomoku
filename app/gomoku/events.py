@@ -16,7 +16,7 @@ def room_to_dict(room):
         'guest': room.guest,
         'black' : room.black,
         'board_size': room.board_size,
-        'each_drop_time': room.each_drop_time,
+        'each_turn_time': room.each_turn_time,
         'gaming_status' : room.gaming_status,
         'turn' : room.turn,
         'host_set'  : room.host_set,
@@ -220,7 +220,6 @@ def on_place_a_piece(data):
                             # inform all players in this room to update the room info
                             emit('update room', room_to_dict(room), to=room_id, namespace='/gomoku')
                     
-
 
 def check_game_over(room): # 0 for not over, 1 for host win, 2 for guest win, 3 for draw
     host_set = ast.literal_eval(room.host_set)
