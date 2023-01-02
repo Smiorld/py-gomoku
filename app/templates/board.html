@@ -10,6 +10,16 @@
     var role;
     var color;
     var room_dict={};
+    var timer=setInterval(function(){
+                let timer = document.getElementById("countdown_timer");
+                if (timer!=null){
+                    let time_left = parseInt(timer.innerHTML);
+                    if (time_left>0){
+                        timer.innerHTML = time_left-1;
+                    }// it's a fake timer. really logic is on serverside.
+                
+                }
+            }, 1000);
     function update_board(room) {
         // update the board
         host_set = JSON.parse(room['host_set']);
@@ -100,16 +110,6 @@
             output_panel.innerHTML += '<h1 id="your_turn">It\'s your turn. Time left:</h1>\n';
             //TODO: add a ugly timer
             output_panel.innerHTML += '<h1 id="countdown_timer">'+(room_dict['each_turn_time']-5)+'</h1>\n';
-            setInterval(function(){
-                let timer = document.getElementById("countdown_timer");
-                if (timer!=null){
-                    let time_left = parseInt(timer.innerHTML);
-                    if (time_left>0){
-                        timer.innerHTML = time_left-1;
-                    }// it's a fake timer. really logic is on serverside.
-                
-                }
-            }, 1000);
 
         }
 
