@@ -220,6 +220,8 @@ def on_place_a_piece(data):
                     db.session.commit()
 
 
+                    # inform all players in this room to update the room info
+                    emit('update room', room_to_dict(room), to=room_id, namespace='/gomoku')
 
                     # check if the game is over
                     is_game_over = check_game_over(room)
@@ -229,6 +231,7 @@ def on_place_a_piece(data):
                         room.host_set = '[]'
                         room.guest_set = '[]'
                         room.black = not room.black
+                        room.turn = room.black
                         db.session.commit()
                         if is_game_over==1:
                             # host win
@@ -261,8 +264,6 @@ def on_place_a_piece(data):
                             # inform all players in this room to update the room info
                             emit('update room', room_to_dict(room), to=room_id, namespace='/gomoku')
                     else:
-                        # inform all players in this room to update the room info
-                        emit('update room', room_to_dict(room), to=room_id, namespace='/gomoku')
                         scheduler.reschedule_job(str(room_id), run_date=time_out_date(room.each_turn_time) ) # refresh the timer
                     
                     
@@ -317,6 +318,7 @@ def game_over(room_id, room, is_game_over): # is_game_over: 0 for not over, 1 fo
             room.host_set = '[]'
             room.guest_set = '[]'
             room.black = not room.black
+            room.turn = room.black
             db.session.commit()
             if is_game_over==1:
                 # host win
