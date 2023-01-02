@@ -5,14 +5,13 @@ from flask_login import LoginManager
 from flask_ckeditor import CKEditor
 from flask_socketio import SocketIO
 
-socketio = SocketIO()
+socketio = SocketIO(async_mode='eventlet')
 db= SQLAlchemy()
 login_manager = LoginManager()
-
+app=Flask(__name__)
 def create_app(make_db=False,debug=False) -> Flask:
 
 
-    app = Flask(__name__)
     app.debug = debug
 
     # add ckeditor for rich text fields
