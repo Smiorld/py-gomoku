@@ -130,27 +130,27 @@
             {% for j in range(board_size) %}
                 <td onclick=place_a_piece({{i}},{{j}}) class="cell" id="{{i}}-{{j}}" state=0>
                     {% if i > 0 and board_size-1 > i and j > 0 and board_size-1 > j %}
-                        <img  src='/static/img/center.png'>
+                        <img style='max-height:calc((100vh - 40px)/{{board_size}});max-width:calc(70vw/{{board_size}});'  src='/static/img/center.png'>
                     {% elif i==0  %}
                         {% if j==0  %}
-                            <img  src='/static/img/left_top.png'>
+                            <img style='max-height:calc((100vh - 40px)/{{board_size}});max-width:calc(70vw/{{board_size}});'  src='/static/img/left_top.png'>
                         {% elif j==board_size-1 %}
-                            <img  src='/static/img/right_top.png'>
+                            <img style='max-height:calc((100vh - 40px)/{{board_size}});max-width:calc(70vw/{{board_size}});'  src='/static/img/right_top.png'>
                         {% else %}
-                            <img  src='/static/img/top.png'>
+                            <img style='max-height:calc((100vh - 40px)/{{board_size}});max-width:calc(70vw/{{board_size}});'  src='/static/img/top.png'>
                         {% endif %}
                     {% elif i==board_size-1 %}
                         {% if j==0  %}
-                            <img  src='/static/img/left_bot.png'>
+                            <img style='max-height:calc((100vh - 40px)/{{board_size}});max-width:calc(70vw/{{board_size}});'  src='/static/img/left_bot.png'>
                         {% elif j==board_size-1 %}
-                            <img  src='/static/img/right_bot.png'>
+                            <img style='max-height:calc((100vh - 40px)/{{board_size}});max-width:calc(70vw/{{board_size}});'  src='/static/img/right_bot.png'>
                         {% else %}
-                            <img  src='/static/img/bot.png'>
+                            <img style='max-height:calc((100vh - 40px)/{{board_size}});max-width:calc(70vw/{{board_size}});'  src='/static/img/bot.png'>
                         {% endif %}
                     {% elif j==0 %}
-                        <img  src='/static/img/left.png'>
+                        <img style='max-height:calc((100vh - 40px)/{{board_size}});max-width:calc(70vw/{{board_size}});'  src='/static/img/left.png'>
                     {% elif j==board_size-1 %}
-                        <img src='/static/img/right.png'>
+                        <img style='max-height:calc((100vh - 40px)/{{board_size}});max-width:calc(70vw/{{board_size}});' src='/static/img/right.png'>
                     {% endif %}
 
                 </td>
