@@ -291,6 +291,8 @@ div .tt:hover:before {
    border-radius:3px;
 }
 
+div#preload { display: none; }
+
 input[type="text"] .tt {
    width:125px;
    -webkit-box-sizing:border-box;
@@ -353,17 +355,28 @@ input[type="text"] .tt {
     padding: 10px;
 }
 
+#nevigation {
+    justify-content: space-between;
+    align-items: center;
+    background-color: var(--primary);
+    color:white;
+    padding: 0 10px;
+    height: 40px;
+}
+
+
 #j-left {
     float: left;
     width: 70%;
-    height: 95vh;
-    overflow: scroll;
+    box-sizing: content-box;
+    height: calc(100vh - 40px);
+    overflow: hidden;
 }
 #j-right {
     float: left;
     width: 30%;
-    height: 95vh;
-    overflow: scroll;
+    height: calc(100vh - 40px);
+    overflow: hidden;
 }
 
 .box {

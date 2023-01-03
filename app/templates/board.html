@@ -1,9 +1,5 @@
 {% extends "layout.html" %}
 {% block head %}
-   
-{% endblock head %}
-
-{% block content %}
 <script>
     var socket = io('/gomoku');
     var sid;
@@ -167,53 +163,53 @@
         if (color=='white'){
             if (row==0){
                 if (col==0){
-                    img = "<img src='/static/img/left_top_white.png'>";
+                    img = "<img style='max-height:calc((100vh - 40px)/{{board_size}});max-width:calc(70vw/{{board_size}});' src='/static/img/left_top_white.png'>";
                 }else if (col==room_dict['board_size']-1){
-                    img = "<img src='/static/img/right_top_white.png'>";
+                    img = "<img style='max-height:calc((100vh - 40px)/{{board_size}});max-width:calc(70vw/{{board_size}});' src='/static/img/right_top_white.png'>";
                 }else{
-                    img = "<img src='/static/img/top_white.png'>";
+                    img = "<img style='max-height:calc((100vh - 40px)/{{board_size}});max-width:calc(70vw/{{board_size}});' src='/static/img/top_white.png'>";
                 }
             }else if (row==room_dict['board_size']-1){
                 if (col==0){
-                    img = "<img src='/static/img/left_bot_white.png'>";
+                    img = "<img style='max-height:calc((100vh - 40px)/{{board_size}});max-width:calc(70vw/{{board_size}});' src='/static/img/left_bot_white.png'>";
                 }else if (col==room_dict['board_size']-1){
-                    img = "<img src='/static/img/right_bot_white.png'>";
+                    img = "<img style='max-height:calc((100vh - 40px)/{{board_size}});max-width:calc(70vw/{{board_size}});' src='/static/img/right_bot_white.png'>";
                 }else{
-                    img = "<img src='/static/img/bot_white.png'>";
+                    img = "<img style='max-height:calc((100vh - 40px)/{{board_size}});max-width:calc(70vw/{{board_size}});' src='/static/img/bot_white.png'>";
                 }
             }else{
                 if (col==0){
-                    img = "<img src='/static/img/left_white.png'>";
+                    img = "<img style='max-height:calc((100vh - 40px)/{{board_size}});max-width:calc(70vw/{{board_size}});' src='/static/img/left_white.png'>";
                 }else if (col==room_dict['board_size']-1){
-                    img = "<img src='/static/img/right_white.png'>";
+                    img = "<img style='max-height:calc((100vh - 40px)/{{board_size}});max-width:calc(70vw/{{board_size}});' src='/static/img/right_white.png'>";
                 }else{
-                    img = "<img src='/static/img/center_white.png'>";
+                    img = "<img style='max-height:calc((100vh - 40px)/{{board_size}});max-width:calc(70vw/{{board_size}});' src='/static/img/center_white.png'>";
                 }
             }
         }else if (color=='black'){
             if (row==0){
                 if (col==0){
-                    img = "<img src='/static/img/left_top_black.png'>";
+                    img = "<img style='max-height:calc((100vh - 40px)/{{board_size}});max-width:calc(70vw/{{board_size}});' src='/static/img/left_top_black.png'>";
                 }else if (col==room_dict['board_size']-1){
-                    img = "<img src='/static/img/right_top_black.png'>";
+                    img = "<img style='max-height:calc((100vh - 40px)/{{board_size}});max-width:calc(70vw/{{board_size}});' src='/static/img/right_top_black.png'>";
                 }else{
-                    img = "<img src='/static/img/top_black.png'>";
+                    img = "<img style='max-height:calc((100vh - 40px)/{{board_size}});max-width:calc(70vw/{{board_size}});' src='/static/img/top_black.png'>";
                 }
             }else if (row==room_dict['board_size']-1){
                 if (col==0){
-                    img = "<img src='/static/img/left_bot_black.png'>";
+                    img = "<img style='max-height:calc((100vh - 40px)/{{board_size}});max-width:calc(70vw/{{board_size}});' src='/static/img/left_bot_black.png'>";
                 }else if (col==room_dict['board_size']-1){
-                    img = "<img src='/static/img/right_bot_black.png'>";
+                    img = "<img style='max-height:calc((100vh - 40px)/{{board_size}});max-width:calc(70vw/{{board_size}});' src='/static/img/right_bot_black.png'>";
                 }else{
-                    img = "<img src='/static/img/bot_black.png'>";
+                    img = "<img style='max-height:calc((100vh - 40px)/{{board_size}});max-width:calc(70vw/{{board_size}});' src='/static/img/bot_black.png'>";
                 }
             }else{
                 if (col==0){
-                    img = "<img src='/static/img/left_black.png'>";
+                    img = "<img style='max-height:calc((100vh - 40px)/{{board_size}});max-width:calc(70vw/{{board_size}});' src='/static/img/left_black.png'>";
                 }else if (col==room_dict['board_size']-1){
-                    img = "<img src='/static/img/right_black.png'>";
+                    img = "<img style='max-height:calc((100vh - 40px)/{{board_size}});max-width:calc(70vw/{{board_size}});' src='/static/img/right_black.png'>";
                 }else{
-                    img = "<img src='/static/img/center_black.png'>";
+                    img = "<img style='max-height:calc((100vh - 40px)/{{board_size}});max-width:calc(70vw/{{board_size}});' src='/static/img/center_black.png'>";
                 }
             }
         }
@@ -278,6 +274,9 @@
     });
 
 </script>
+{% endblock head %}
+
+{% block content %}
 <div id="j-left">   
     <table id="board" style=' border-collapse: collapse;'>
 
@@ -286,27 +285,27 @@
             {% for j in range(board_size) %}
                 <td onclick=place_a_piece({{i}},{{j}}) class="cell" id="{{i}}-{{j}}" state=0>
                     {% if i > 0 and board_size-1 > i and j > 0 and board_size-1 > j %}
-                        <img  src='/static/img/center.png'>
+                        <img style="max-height:calc((100vh - 40px)/{{board_size}});max-width:calc(70vw/{{board_size}});" src='/static/img/center.png'>
                     {% elif i==0  %}
                         {% if j==0  %}
-                            <img  src='/static/img/left_top.png'>
+                            <img style="max-height:calc((100vh - 40px)/{{board_size}});max-width:calc(70vw/{{board_size}});" id="board_img" src='/static/img/left_top.png'>
                         {% elif j==board_size-1 %}
-                            <img  src='/static/img/right_top.png'>
+                            <img style="max-height:calc((100vh - 40px)/{{board_size}});max-width:calc(70vw/{{board_size}});" id="board_img" src='/static/img/right_top.png'>
                         {% else %}
-                            <img  src='/static/img/top.png'>
+                            <img style="max-height:calc((100vh - 40px)/{{board_size}});max-width:calc(70vw/{{board_size}});" id="board_img" src='/static/img/top.png'>
                         {% endif %}
                     {% elif i==board_size-1 %}
                         {% if j==0  %}
-                            <img  src='/static/img/left_bot.png'>
+                            <img style="max-height:calc((100vh - 40px)/{{board_size}});max-width:calc(70vw/{{board_size}});" id="board_img" src='/static/img/left_bot.png'>
                         {% elif j==board_size-1 %}
-                            <img  src='/static/img/right_bot.png'>
+                            <img style="max-height:calc((100vh - 40px)/{{board_size}});max-width:calc(70vw/{{board_size}});" id="board_img" src='/static/img/right_bot.png'>
                         {% else %}
-                            <img  src='/static/img/bot.png'>
+                            <img style="max-height:calc((100vh - 40px)/{{board_size}});max-width:calc(70vw/{{board_size}});" id="board_img" src='/static/img/bot.png'>
                         {% endif %}
                     {% elif j==0 %}
-                        <img  src='/static/img/left.png'>
+                        <img style="max-height:calc((100vh - 40px)/{{board_size}});max-width:calc(70vw/{{board_size}});" id="board_img" src='/static/img/left.png'>
                     {% elif j==board_size-1 %}
-                        <img src='/static/img/right.png'>
+                        <img style="max-height:calc((100vh - 40px)/{{board_size}});max-width:calc(70vw/{{board_size}});" id="board_img" src='/static/img/right.png'>
                     {% endif %}
 
                 </td>
@@ -318,6 +317,34 @@
 
 <div id="j-right">
 
-
+</div>
+<div id="preload">
+    <img src="/static/img/left_top.png">
+    <img src="/static/img/top.png">
+    <img src="/static/img/right_top.png">
+    <img src="/static/img/left.png">
+    <img src="/static/img/center.png">
+    <img src="/static/img/right.png">
+    <img src="/static/img/left_bot.png">
+    <img src="/static/img/bot.png">
+    <img src="/static/img/right_bot.png">
+    <img src="/static/img/left_top_black.png">
+    <img src="/static/img/top_black.png">
+    <img src="/static/img/right_top_black.png">
+    <img src="/static/img/left_black.png">
+    <img src="/static/img/center_black.png">
+    <img src="/static/img/right_black.png">
+    <img src="/static/img/left_bot_black.png">
+    <img src="/static/img/bot_black.png">
+    <img src="/static/img/right_bot_black.png">
+    <img src="/static/img/left_top_white.png">
+    <img src="/static/img/top_white.png">
+    <img src="/static/img/right_top_white.png">
+    <img src="/static/img/left_white.png">
+    <img src="/static/img/center_white.png">
+    <img src="/static/img/right_white.png">
+    <img src="/static/img/left_bot_white.png">
+    <img src="/static/img/bot_white.png">
+    <img src="/static/img/right_bot_white.png">
 </div>
 {% endblock content %}
