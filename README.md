@@ -13,6 +13,7 @@
 目前的todo：查看flask-socketio是否有事件接口。因为考虑到国情，一般出现断线重连大部分是IP已更换，需查看库session 算法是否包含含有ip参与计算。
 
 # notes
+
 12.28 今天把flask框架搭好了，数据库的表起了个头。初步接触、学习flask_socketOI 和 websocket。
 
 12.29 把flask_socketIO和websocket打个样跑起来了。把数据库的room表填好了。把进出房间的socket及数据库的控制都写好了。
@@ -20,7 +21,7 @@
 
 12.30 五子棋的纯棋局功能完整。右侧新增打印面板，用于开发阶段快速debug和监控数据。
 
-12.31 右侧打印内容完善，新增棋局状态与回合信息，用<h1>输出。新增仅生效于客户端的假countdown timer。啥也不触发，只帮忙本地计时。
+12.31 右侧打印内容完善，新增棋局状态与回合信息，用h1输出。新增仅生效于客户端的假countdown timer。啥也不触发，只帮忙本地计时。
 
 1.1 服务器端的timer做好了，历尽周折，简作记录。
 第一步：首先eventlet使用的是协程，BackgroundScheduler实际是线程，两者是矛盾的。因此需要把线程绿化（变成协程？）。在使用BackgroundScheduler的文件中用猴子补丁实现本效果。
